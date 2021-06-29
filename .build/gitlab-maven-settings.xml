@@ -1,0 +1,42 @@
+<settings xmlns="http://maven.apache.org/SETTINGS/1.1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/SETTINGS/1.1.0 http://maven.apache.org/xsd/settings-1.1.0.xsd">
+  <servers>
+    <server>
+      <id>gitlab-maven</id>
+      <configuration>
+        <httpHeaders>
+          <!-- Authentication to GitLab -->
+          <property>
+            <name>Job-Token</name>
+            <value>${env.CI_JOB_TOKEN}</value>
+          </property>
+        </httpHeaders>
+      </configuration>
+    </server>
+  </servers>
+  <pluginGroups>
+    <pluginGroup>org.sonarsource.scanner.maven</pluginGroup>
+  </pluginGroups>
+  <profiles>
+    <profile>
+      <id>ciat</id>
+      <activation>
+        <activeByDefault>true</activeByDefault>
+      </activation>
+      <properties>
+        <!-- SonarQube Report Upload Location -->
+        <sonar.host.url>${env.SONAR_URL}</sonar.host.url>
+        <sonar.login>${env.SONAR_AUTH}</sonar.login>
+      </properties>
+      <repositories>
+        <!-- Download Location -->
+        <repository>
+          <!-- <repository>, were it in POM, will not resolve Properties -->
+          <!-- https://stackoverflow.com/a/59813598/225769 -->
+          <id>gitlab-maven</id>
+          <url>${env.GITLAB_GRP_API}/packages/maven</url>
+        </repository>
+      </repositories>
+    </profile>
+  </profiles>
+</settings>

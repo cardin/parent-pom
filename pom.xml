@@ -1,0 +1,286 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>dso.info.utils</groupId>
+    <artifactId>ParentPom</artifactId>
+    <version>0.1</version>
+    <packaging>pom</packaging>
+    <properties>
+        <cpRel>../lib</cpRel>
+        <mainClass/>
+        <skipTests>false</skipTests>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <!-- Java & Maven -->
+        <maven.compiler.source>11</maven.compiler.source>
+        <maven.compiler.target>${maven.compiler.source}</maven.compiler.target>
+        <version.build.java>11</version.build.java><!-- If using Java 8, type "1.8" instead of "8" -->
+        <version.build.maven>3.6.3</version.build.maven>
+        <!-- Super POM Plugins -->
+        <version.plugin.clean>3.1.0</version.plugin.clean>
+        <version.plugin.compile>3.8.1</version.plugin.compile>
+        <version.plugin.install>3.0.0-M1</version.plugin.install>
+        <version.plugin.jar>3.2.0</version.plugin.jar>
+        <version.plugin.resources>3.2.0</version.plugin.resources>
+        <version.plugin.site>3.9.1</version.plugin.site>
+        <version.plugin.surefire>3.0.0-M5</version.plugin.surefire>
+        <!-- Plugins -->
+        <version.plugin.dependency>3.1.2</version.plugin.dependency>
+        <version.plugin.deploy>3.0.0-M1</version.plugin.deploy>
+        <version.plugin.enforce>3.0.0-M3</version.plugin.enforce>
+        <version.plugin.shade>3.2.4</version.plugin.shade>
+    </properties>
+    <profiles>
+        <profile>
+            <!-- Build the JAR with no main class -->
+            <id>library</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <!-- Disable copy-dependencies -->
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-dependency-plugin</artifactId>
+                        <version>${version.plugin.dependency}</version>
+                        <executions>
+                            <execution>
+                                <phase>none</phase>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-enforcer-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <configuration combine.children="append">
+                                    <rules>
+                                        <requireProperty>
+                                            <property>mainClass</property>
+                                            <regex>.*</regex><!-- removes the Regex -->
+                                        </requireProperty>
+                                        <requireProperty>
+                                            <property>cpRel</property>
+                                            <regex>.*</regex><!-- removes the Regex -->
+                                        </requireProperty>
+                                    </rules>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
+            <!-- Build a single uber JAR with all dependencies internalized -->
+            <id>uber</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <!-- Disable copy-dependencies -->
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-dependency-plugin</artifactId>
+                        <version>${version.plugin.dependency}</version>
+                        <executions>
+                            <execution>
+                                <phase>none</phase>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-enforcer-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <configuration combine.children="append">
+                                    <rules>
+                                        <requireProperty>
+                                            <property>cpRel</property>
+                                            <regex>.*</regex><!-- removes the Regex -->
+                                        </requireProperty>
+                                    </rules>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-jar-plugin</artifactId>
+                        <configuration>
+                            <finalName>${project.build.finalName}-uber</finalName>
+                        </configuration>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-shade-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>shade</goal>
+                                </goals>
+                                <configuration>
+                                    <transformers>
+                                        <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                                            <mainClass>${mainClass}</mainClass>
+                                        </transformer>
+                                    </transformers>
+                                    <createDependencyReducedPom>false</createDependencyReducedPom>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
+    <build>
+        <pluginManagement>
+            <!-- Common Plugin Configurations -->
+            <!-- Unless referenced explicitly (or is a Super POM plugin), it will remain unused -->
+            <!-- All Plugin versions are defined here -->
+            <plugins>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-clean-plugin</artifactId>
+                    <version>${version.plugin.clean}</version>
+<!--                    <configuration>-->
+<!--                        <excludeDefaultDirectories>true</excludeDefaultDirectories>-->
+<!--                        <filesets>-->
+<!--                            <fileset>-->
+<!--                                <directory>${project.build.directory}</directory>-->
+<!--                                <includes>-->
+<!--                                    <include>**/*</include>-->
+<!--                                </includes>-->
+<!--                            </fileset>-->
+<!--                        </filesets>-->
+<!--                    </configuration>-->
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-compiler-plugin</artifactId>
+                    <version>${version.plugin.compile}</version>
+                    <configuration>
+                        <source>${maven.compiler.source}</source>
+                        <target>${maven.compiler.target}</target>
+                        <release>${maven.compiler.target}</release>
+                    </configuration>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-dependency-plugin</artifactId>
+                    <version>${version.plugin.dependency}</version>
+                    <executions>
+                        <execution>
+                            <phase>prepare-package</phase>
+                            <goals>
+                                <goal>copy-dependencies</goal>
+                            </goals>
+                            <configuration>
+                                <prependGroupId>true</prependGroupId>
+                                <outputDirectory>${cpRel}</outputDirectory>
+                                <includeScope>runtime</includeScope><!-- Excluding Test Scope -->
+                            </configuration>
+                        </execution>
+                    </executions>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-deploy-plugin</artifactId>
+                    <version>${version.plugin.deploy}</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-enforcer-plugin</artifactId>
+                    <version>${version.plugin.enforce}</version>
+                    <executions>
+                        <execution>
+                            <phase>validate</phase>
+                            <goals>
+                                <goal>enforce</goal>
+                            </goals>
+                            <configuration>
+                                <rules>
+                                    <requireJavaVersion>
+                                        <version>${version.build.java}</version>
+                                    </requireJavaVersion>
+                                    <requireMavenVersion>
+                                        <version>${version.build.maven}</version>
+                                    </requireMavenVersion>
+                                    <requireProperty>
+                                        <property>cpRel</property>
+                                        <regex>\S+.*</regex>
+                                        <message>Missing Property: cpRel - relative path to classpath
+                                            from project.basedir</message>
+                                    </requireProperty>
+                                    <requireProperty>
+                                        <property>mainClass</property>
+                                        <regex>\S+.*</regex>
+                                        <message>Missing Property: mainClass - entry point of the program</message>
+                                    </requireProperty>
+                                </rules>
+                            </configuration>
+                        </execution>
+                    </executions>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-install-plugin</artifactId>
+                    <version>${version.plugin.install}</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-jar-plugin</artifactId>
+                    <version>${version.plugin.jar}</version>
+                    <configuration>
+                        <archive>
+                            <manifest>
+                                <addClasspath>true</addClasspath>
+                                <classpathPrefix>../${cpRel}</classpathPrefix>
+                                <classpathLayoutType>custom</classpathLayoutType>
+                                <!--suppress UnresolvedMavenProperty -->
+                                <customClasspathLayout>$${artifact.groupId}.$${artifact.artifactId}-$${artifact.version}$${dashClassifier?}.$${artifact.extension}</customClasspathLayout>
+                                <mainClass>${mainClass}</mainClass>
+                            </manifest>
+                        </archive>
+                    </configuration>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-resources-plugin</artifactId>
+                    <version>${version.plugin.resources}</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-shade-plugin</artifactId>
+                    <version>${version.plugin.shade}</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-site-plugin</artifactId>
+                    <version>${version.plugin.site}</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-surefire-plugin</artifactId>
+                    <version>${version.plugin.surefire}</version>
+                    <configuration>
+                        <workingDirectory>${project.build.directory}</workingDirectory>
+                    </configuration>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+        <plugins>
+            <!-- Plugins here will automatically trigger -->
+            <!-- Therefore, plugins not part of the default lifecycle should be here -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-enforcer-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+            </plugin>
+        </plugins>
+    </build>
+</project>

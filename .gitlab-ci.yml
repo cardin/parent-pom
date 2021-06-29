@@ -1,0 +1,46 @@
+# Referenced from GitLab's template Maven CI
+# https://gitlab.com/gitlab-org/gitlab-foss/-/blob/master/lib/gitlab/ci/templates/Maven.gitlab-ci.yml
+
+variables:
+    CACHE_NUKE_PROB: 1
+    # Java
+    MAVEN_CACHE: "$CI_PROJECT_DIR/.m2/repository"
+    MAVEN_SETTINGS: ".build/gitlab-maven-settings.xml"
+    MAVEN_OPTS: "-Dhttps.protocols=TLSv1.2 -Dmaven.repo.local=$CI_PROJECT_DIR/.m2/repository -Dorg.slf4j.simpleLogger.showDateTime=true -Djava.awt.headless=true -DaltDeploymentRepository=gitlab-maven::$GITLAB_PROJ_API/packages/maven" # Maven env var
+    MAVEN_CLI_OPTS: "--batch-mode --errors --fail-at-end --show-version -DinstallAtEnd=true -DdeployAtEnd=true"
+
+stages:
+    - deploy
+
+default:
+    image: alpine:latest
+    retry:
+        max: 2
+        when: runner_system_failure
+    cache:
+        paths:
+            - $MAVEN_CACHE
+    artifacts:
+        expire_in: 1 week
+
+maven-deploy:
+    stage: deploy
+    image: "maven:3-adoptopenjdk-11"
+    script:
+        - >-
+            if [ ! -f $MAVEN_SETTINGS ];
+                then echo "ERROR - Maven settings missing!";
+                exit -1;
+            fi
+        - >-
+            if [ ! -d $MAVEN_CACHE ];
+                then echo "No Maven cache found";
+            else
+                rm -rf $MAVEN_CACHE/dso;
+                if [[ $(($RANDOM % 10)) < CACHE_NUKE_PROB ]];
+                    then echo "Nuking Maven cache"
+                    rm -rf $MAVEN_CACHE;
+                fi
+            fi
+        # https://stackoverflow.com/a/38148135
+        - mvn $MAVEN_CLI_OPTS -s $MAVEN_SETTINGS -P library jar:jar deploy:deploy
