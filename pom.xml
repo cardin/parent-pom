@@ -29,6 +29,7 @@
         <version.plugin.dependency>3.1.2</version.plugin.dependency>
         <version.plugin.deploy>3.0.0-M1</version.plugin.deploy>
         <version.plugin.enforce>3.0.0-M3</version.plugin.enforce>
+        <version.plugin.javadoc>3.3.0</version.plugin.javadoc>
         <version.plugin.shade>3.2.4</version.plugin.shade>
     </properties>
     <profiles>
@@ -41,7 +42,6 @@
                         <!-- Disable copy-dependencies -->
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-dependency-plugin</artifactId>
-                        <version>${version.plugin.dependency}</version>
                         <executions>
                             <execution>
                                 <phase>none</phase>
@@ -68,6 +68,15 @@
                             </execution>
                         </executions>
                     </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-javadoc-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <phase>none</phase>
+                            </execution>
+                        </executions>
+                    </plugin>
                 </plugins>
             </build>
         </profile>
@@ -80,7 +89,6 @@
                         <!-- Disable copy-dependencies -->
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-dependency-plugin</artifactId>
-                        <version>${version.plugin.dependency}</version>
                         <executions>
                             <execution>
                                 <phase>none</phase>
@@ -138,7 +146,6 @@
         <pluginManagement>
             <!-- Common Plugin Configurations -->
             <!-- Unless referenced explicitly (or is a Super POM plugin), it will remain unused -->
-            <!-- All Plugin versions are defined here -->
             <plugins>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
@@ -168,60 +175,8 @@
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-dependency-plugin</artifactId>
-                    <version>${version.plugin.dependency}</version>
-                    <executions>
-                        <execution>
-                            <phase>prepare-package</phase>
-                            <goals>
-                                <goal>copy-dependencies</goal>
-                            </goals>
-                            <configuration>
-                                <prependGroupId>true</prependGroupId>
-                                <outputDirectory>${cpRel}</outputDirectory>
-                                <includeScope>runtime</includeScope><!-- Excluding Test Scope -->
-                            </configuration>
-                        </execution>
-                    </executions>
-                </plugin>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-deploy-plugin</artifactId>
                     <version>${version.plugin.deploy}</version>
-                </plugin>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-enforcer-plugin</artifactId>
-                    <version>${version.plugin.enforce}</version>
-                    <executions>
-                        <execution>
-                            <phase>validate</phase>
-                            <goals>
-                                <goal>enforce</goal>
-                            </goals>
-                            <configuration>
-                                <rules>
-                                    <requireJavaVersion>
-                                        <version>${version.build.java}</version>
-                                    </requireJavaVersion>
-                                    <requireMavenVersion>
-                                        <version>${version.build.maven}</version>
-                                    </requireMavenVersion>
-                                    <requireProperty>
-                                        <property>cpRel</property>
-                                        <regex>\S+.*</regex>
-                                        <message>Missing Property: cpRel - relative path to classpath
-                                            from project.basedir</message>
-                                    </requireProperty>
-                                    <requireProperty>
-                                        <property>mainClass</property>
-                                        <regex>\S+.*</regex>
-                                        <message>Missing Property: mainClass - entry point of the program</message>
-                                    </requireProperty>
-                                </rules>
-                            </configuration>
-                        </execution>
-                    </executions>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
@@ -275,11 +230,81 @@
             <!-- Therefore, plugins not part of the default lifecycle should be here -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-enforcer-plugin</artifactId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <version>${version.plugin.dependency}</version>
+                <executions>
+                    <execution>
+                        <id>JavaDoc Download</id>
+                        <goals>
+                            <goal>resolve</goal>
+                        </goals>
+                        <configuration>
+                            <classifier>javadoc</classifier>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>Copy Dependencies</id>
+                        <phase>prepare-package</phase>
+                        <goals>
+                            <goal>copy-dependencies</goal>
+                        </goals>
+                        <configuration>
+                            <prependGroupId>true</prependGroupId>
+                            <outputDirectory>${cpRel}</outputDirectory>
+                            <includeScope>runtime</includeScope><!-- Excluding Test Scope -->
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-dependency-plugin</artifactId>
+                <artifactId>maven-enforcer-plugin</artifactId>
+                <version>${version.plugin.enforce}</version>
+                <executions>
+                    <execution>
+                        <phase>validate</phase>
+                        <goals>
+                            <goal>enforce</goal>
+                        </goals>
+                        <configuration>
+                            <rules>
+                                <requireJavaVersion>
+                                    <version>${version.build.java}</version>
+                                </requireJavaVersion>
+                                <requireMavenVersion>
+                                    <version>${version.build.maven}</version>
+                                </requireMavenVersion>
+                                <requireProperty>
+                                    <property>cpRel</property>
+                                    <regex>\S+.*</regex>
+                                    <message>Missing Property: cpRel - relative path to classpath
+                                        from project.basedir</message>
+                                </requireProperty>
+                                <requireProperty>
+                                    <property>mainClass</property>
+                                    <regex>\S+.*</regex>
+                                    <message>Missing Property: mainClass - entry point of the program</message>
+                                </requireProperty>
+                            </rules>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <version>${version.plugin.javadoc}</version>
+                <executions>
+                    <execution>
+                        <id>attach-javadocs</id>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <failOnError>false</failOnError>
+                </configuration>
             </plugin>
         </plugins>
     </build>

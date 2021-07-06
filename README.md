@@ -1,5 +1,7 @@
 Java POM for easy POM definition and inheritance
 
+For more information on what this POM does, go to the [Available Profiles](#available-profiles) section.
+
 # Recommended Tools
 
 - AdoptOpenJDK 11 LTS
@@ -49,6 +51,17 @@ Child projects should define any needed Maven properties, for example:
 
 Child projects can then perform Maven actions such as compile (`mvn package`), install (`mvn -P library install`), etc.
 
+## Checking for dependency updates
+For checking plugin versions:
+```shell
+mvn versions:display-plugin-updates
+```
+
+For checking dependency versions:
+```shell
+mvn versions:display-dependency-updates
+```
+
 ## Available Profiles
 
 ### Default profile
@@ -59,6 +72,7 @@ Child projects can then perform Maven actions such as compile (`mvn package`), i
 - compiles the project into a lightweight JAR
     - which uses the full class name specified by property `mainClass`
     - with relative classpath to JAR dependencies specified by property `cpRel`
+- includes JavaDocs in the output
 
 ### `library` profile
 
