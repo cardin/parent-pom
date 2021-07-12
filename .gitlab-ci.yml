@@ -6,8 +6,8 @@ variables:
     # Java
     MAVEN_CACHE: "$CI_PROJECT_DIR/.m2/repository"
     MAVEN_SETTINGS: ".build/gitlab-maven-settings.xml"
-    MAVEN_OPTS: "-Dhttps.protocols=TLSv1.2 -Dmaven.repo.local=$CI_PROJECT_DIR/.m2/repository -Dorg.slf4j.simpleLogger.showDateTime=true -Djava.awt.headless=true -DaltDeploymentRepository=gitlab-maven::$GITLAB_PROJ_API/packages/maven" # Maven env var
-    MAVEN_CLI_OPTS: "--batch-mode --errors --fail-at-end --show-version -DinstallAtEnd=true -DdeployAtEnd=true"
+    MAVEN_OPTS: "-Dhttps.protocols=TLSv1.2 -Dorg.slf4j.simpleLogger.showDateTime=true -Djava.awt.headless=true" # https://maven.apache.org/configure.html
+    MAVEN_CLI_OPTS: "--batch-mode --errors --fail-at-end --show-version -DinstallAtEnd=true -DdeployAtEnd=true -Dmaven.repo.local=$CI_PROJECT_DIR/.m2/repository -DaltDeploymentRepository=gitlab-maven::$GITLAB_PROJ_API/packages/maven"
 
 stages:
     - deploy
