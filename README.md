@@ -29,7 +29,7 @@ Child projects should inherit this POM by adding this to their `pom.xml` file:
 
 ```xml
 <parent>
-    <groupId>dso.info.utils</groupId>
+    <groupId>info.utils</groupId>
     <artifactId>ParentPom</artifactId>
     <version>0.1</version>
 </parent>
