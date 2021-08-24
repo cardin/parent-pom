@@ -9,7 +9,7 @@
     <packaging>pom</packaging>
     <properties>
         <cpRel>../lib</cpRel>
-        <mainClass>null</mainClass>
+        <mainClass/>
         <skipTests>false</skipTests>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <!-- Java & Maven -->
@@ -36,12 +36,6 @@
         <profile>
             <!-- Build the JAR with no main class -->
             <id>library</id>
-            <activation>
-                <property>
-                    <name>mainClass</name>
-                    <value>null</value>
-                </property>
-            </activation>
             <build>
                 <plugins>
                     <plugin>
