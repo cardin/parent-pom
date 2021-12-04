@@ -26,10 +26,10 @@
         <version.plugin.site>3.9.1</version.plugin.site>
         <version.plugin.surefire>3.0.0-M5</version.plugin.surefire>
         <!-- Plugins -->
-        <version.plugin.dependency>3.1.2</version.plugin.dependency>
+        <version.plugin.dependency>3.2.0</version.plugin.dependency>
         <version.plugin.deploy>3.0.0-M1</version.plugin.deploy>
-        <version.plugin.enforce>3.0.0-M3</version.plugin.enforce>
-        <version.plugin.javadoc>3.3.0</version.plugin.javadoc>
+        <version.plugin.enforce>3.0.0</version.plugin.enforce>
+        <version.plugin.javadoc>3.3.1</version.plugin.javadoc>
         <version.plugin.shade>3.2.4</version.plugin.shade>
     </properties>
     <profiles>
