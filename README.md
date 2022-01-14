@@ -4,13 +4,13 @@ For more information on what this POM does, go to the [Available Profiles](#avai
 
 # Recommended Tools
 
-- AdoptOpenJDK 11 LTS
+- Temurin Java 11 LTS
 - Apache Maven 3+
 
 # Setup
 
-- Build the Project
-    - `./build.sh`
+- Build the Project: `./build.sh`
+- Check for dependency update: `./update_check.sh`
 
 ## Running Offline
 
@@ -25,18 +25,22 @@ If you wish to build this in an offline environment
 
 # Using it
 
-Child projects should inherit this POM by adding this to their `pom.xml` file:
+Child projects should ensure this POM is either installed inside the Maven Local Repo, or that they have access to a Maven Registry that
+hosts this POM.
+
+To install this POM inside the Maven Local Repo:
+1. Have this project cloned locally
+2. Build and install this project via `mvn -P library install` into your local Maven repository
+
+For child projects to utilise this POM, add this to their `pom.xml` file:
 
 ```xml
 <parent>
     <groupId>info.utils</groupId>
     <artifactId>ParentPom</artifactId>
-    <version>0.1</version>
+    <version>0.1</version> <!--or an appropriate version-->
 </parent>
 ```
-
-Child projects should ensure this POM is either installed inside the Maven Local Repo, or that they have access to a Maven Registry that
-hosts this POM.
 
 Child projects should define any needed Maven properties, for example:
 
@@ -44,7 +48,7 @@ Child projects should define any needed Maven properties, for example:
 
 <properties>
     <property>
-        <mainClass>...</mainClass>
+        <mainClass>...</mainClass> <!--fully-qualified class name of the main class-->
     </property>
 </properties>
 ```

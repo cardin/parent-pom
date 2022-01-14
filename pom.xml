@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>info.utils</groupId>
     <artifactId>ParentPom</artifactId>
-    <version>0.1</version>
+    <version>0.2</version>
     <packaging>pom</packaging>
     <properties>
         <cpRel>../lib</cpRel>
@@ -19,15 +19,15 @@
         <version.build.maven>3.6.3</version.build.maven>
         <!-- Super POM Plugins -->
         <version.plugin.clean>3.1.0</version.plugin.clean>
-        <version.plugin.compile>3.8.1</version.plugin.compile>
+        <version.plugin.compile>3.9.0</version.plugin.compile>
         <version.plugin.install>3.0.0-M1</version.plugin.install>
-        <version.plugin.jar>3.2.0</version.plugin.jar>
+        <version.plugin.jar>3.2.2</version.plugin.jar>
         <version.plugin.resources>3.2.0</version.plugin.resources>
-        <version.plugin.site>3.9.1</version.plugin.site>
+        <version.plugin.site>3.10.0</version.plugin.site>
         <version.plugin.surefire>3.0.0-M5</version.plugin.surefire>
         <!-- Plugins -->
         <version.plugin.dependency>3.2.0</version.plugin.dependency>
-        <version.plugin.deploy>3.0.0-M1</version.plugin.deploy>
+        <version.plugin.deploy>3.0.0-M2</version.plugin.deploy>
         <version.plugin.enforce>3.0.0</version.plugin.enforce>
         <version.plugin.javadoc>3.3.1</version.plugin.javadoc>
         <version.plugin.shade>3.2.4</version.plugin.shade>
@@ -151,17 +151,6 @@
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-clean-plugin</artifactId>
                     <version>${version.plugin.clean}</version>
-<!--                    <configuration>-->
-<!--                        <excludeDefaultDirectories>true</excludeDefaultDirectories>-->
-<!--                        <filesets>-->
-<!--                            <fileset>-->
-<!--                                <directory>${project.build.directory}</directory>-->
-<!--                                <includes>-->
-<!--                                    <include>**/*</include>-->
-<!--                                </includes>-->
-<!--                            </fileset>-->
-<!--                        </filesets>-->
-<!--                    </configuration>-->
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
