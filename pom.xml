@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>info.utils</groupId>
     <artifactId>ParentPom</artifactId>
-    <version>0.2</version>
+    <version>0.3</version>
     <packaging>pom</packaging>
     <properties>
         <cpRel>../lib</cpRel>
@@ -45,6 +45,7 @@
                         <artifactId>maven-dependency-plugin</artifactId>
                         <executions>
                             <execution>
+                                <id>Copy Dependencies</id>
                                 <phase>none</phase>
                             </execution>
                         </executions>
@@ -92,6 +93,7 @@
                         <artifactId>maven-dependency-plugin</artifactId>
                         <executions>
                             <execution>
+                                <id>Copy Dependencies</id>
                                 <phase>none</phase>
                             </execution>
                         </executions>
@@ -235,6 +237,17 @@
                         </goals>
                         <configuration>
                             <classifier>javadoc</classifier>
+                            <silent>true</silent>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>Offline Download</id>
+                        <phase>prepare-package</phase>
+                        <goals>
+                            <goal>go-offline</goal>
+                        </goals>
+                        <configuration>
+                            <silent>true</silent>
                         </configuration>
                     </execution>
                     <execution>
@@ -300,6 +313,7 @@
                 <configuration>
                     <failOnError>false</failOnError>
                     <doclint>none</doclint>
+                    <quiet>true</quiet>
                 </configuration>
             </plugin>
         </plugins>
