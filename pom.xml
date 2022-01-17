@@ -12,6 +12,7 @@
         <mainClass/>
         <skipTests>false</skipTests>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <bannedClassifier>linux</bannedClassifier><!-- To detect unwanted classifiers -->
         <!-- Java & Maven -->
         <maven.compiler.source>11</maven.compiler.source>
         <maven.compiler.target>${maven.compiler.source}</maven.compiler.target>
@@ -293,6 +294,24 @@
                                     <regex>\S+.*</regex>
                                     <message>Missing Property: mainClass - entry point of the program</message>
                                 </requireProperty>
+                                <bannedDependencies>
+                                    <excludes>
+                                        <exclude>*:*:*:*:*:*${bannedClassifier}*</exclude>
+                                    </excludes>
+                                    <message>
+                                        <![CDATA[
+Banned classifier found.
+1. Add the "javacpp.platform" system property to Maven to limit classifiers,
+e.g. "mvn -Djavacpp.platform=windows-x86_64 ..."
+
+2. Or, apply POM <exclusions> on the <dependency> tag to remove the offending
+transitive dependency. Then create a <dependency> entry to add that transitive
+dependency in with your desired classifier.
+
+https://stackoverflow.com/questions/60336169/how-to-copy-only-os-specific-dependency-jars-by-maven
+                                        ]]>
+                                    </message>
+                                </bannedDependencies>
                             </rules>
                         </configuration>
                     </execution>
