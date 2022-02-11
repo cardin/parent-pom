@@ -1,0 +1,25 @@
+env:
+  MAVEN_SETTINGS: ".github/workflows/settings.xml"
+  MAVEN_CLI_OPTS: "--batch-mode --errors --fail-at-end --show-version -DinstallAtEnd=true -DdeployAtEnd=true"
+on:
+  push:
+    tags:
+      - "*"
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-java@v2
+        with:
+          java-version: '11'
+          distribution: 'temurin'
+          cache: 'maven'
+      - name: Publish package
+        # https://stackoverflow.com/a/38148135
+        run: mvn $MAVEN_CLI_OPTS -s $MAVEN_SETTINGS -P library jar:jar deploy:deploy
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

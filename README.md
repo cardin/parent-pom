@@ -1,9 +1,14 @@
-Java POM for easy POM definition and inheritance
+Java POM for easy POM definition and inheritance.
+
+Have a look at [Available Profiles](#available-profiles) to see what it can do.
+
+[TOC]
 
 
 # Requirements
 
 - Apache Maven 3+
+
 
 # Setup
 
@@ -11,6 +16,7 @@ Install the POM
 ```shell
 $ mvn -P library install
 ```
+
 
 # Updating
 ```shell
@@ -101,7 +107,7 @@ Purpose:
 After you've inherited this POM and built a Java app, 
 sometimes you want to deploy within an offline environment.
 
-1. Go to an online environment
+1. Go to an online machine
 2. `git clone <url> <localDir>`
 3. Build your Java app, but add this property `-D"maven.repo.local"=<dir>`
     - E.g. `mvn -Dmaven.repo.local=<dir> install`
