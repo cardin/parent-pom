@@ -4,20 +4,19 @@
 variables:
     # Java
     MAVEN_DOCKER: maven:3-eclipse-temurin-11
-    MAVEN_SETTINGS: ".build/gitlab-maven-settings.xml"
+    MAVEN_SETTINGS: ".gitlab/settings.xml"
     MAVEN_OPTS: "-Dhttps.protocols=TLSv1.2 -Dorg.slf4j.simpleLogger.showDateTime=true -Djava.awt.headless=true" # https://maven.apache.org/configure.html
-    MAVEN_CLI_OPTS: "--batch-mode --errors --fail-at-end --show-version -DinstallAtEnd=true -DdeployAtEnd=true -DaltDeploymentRepository=gitlab-maven::${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/maven"
+    MAVEN_CLI_OPTS: "--batch-mode --errors --fail-at-end --show-version -DinstallAtEnd=true -DdeployAtEnd=true"
+
+cache:
+    paths:
+        - .m2/repository
 
 stages:
     - deploy
 
 default:
-    image: alpine:latest
-    retry:
-        max: 2
-        when: runner_system_failure
-    artifacts:
-        expire_in: 1 week
+    retry: 2
 
 maven-deploy:
     stage: deploy
@@ -25,3 +24,6 @@ maven-deploy:
     script:
         # https://stackoverflow.com/a/38148135
         - mvn $MAVEN_CLI_OPTS -s $MAVEN_SETTINGS -P library jar:jar deploy:deploy
+    only:
+        refs:
+            - tags
