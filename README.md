@@ -1,90 +1,84 @@
 Java POM for easy POM definition and inheritance
 
-For more information on what this POM does, go to the [Available Profiles](#available-profiles) section.
 
-# Recommended Tools
+# Requirements
 
-- Temurin Java 11 LTS
 - Apache Maven 3+
 
 # Setup
 
-- Build the Project: `./build.sh`
-- Check for dependency update: `./update_check.sh`
+Install the POM
+```shell
+$ mvn -P library install
+```
 
-## Running Offline
+# Updating
+```shell
+# Check for Maven Plugin updates
+$ mvn versions:display-plugin-updates
+# Check for Maven Dependency updates
+$ mvn versions:display-dependency-updates
+```
 
-If you wish to build this in an offline environment
-
-1. Git clone and build it in an online environment
-2. Locate the Maven Local Repository
-    - Use `mvn help:evaluate -Dexpression=settings.localRepository` if you need help
-3. Copy the Local Repository to the offline environment's Maven Local Repository
-4. Set your Maven `settings.xml` to `<offline>true</offline>`
-    - See https://maven.apache.org/settings.html for settings' location
 
 # Using it
 
-Child projects should ensure this POM is either installed inside the Maven Local Repo, or that they have access to a Maven Registry that
-hosts this POM.
+Once this Parent POM is inside the Maven local repository or a Maven Registry, 
+child projects can inherit it.
 
-To install this POM inside the Maven Local Repo:
-1. Have this project cloned locally
-2. Build and install this project via `mvn -P library install` into your local Maven repository
-
-For child projects to utilise this POM, add this to their `pom.xml` file:
+Add this to their `pom.xml` file:
 
 ```xml
 <parent>
-    <groupId>info.utils</groupId>
-    <artifactId>ParentPom</artifactId>
-    <version>0.1</version> <!--or an appropriate version-->
+    <groupId>io.github.cardin</groupId>
+    <artifactId>parent-pom</artifactId>
+    <version>...</version>
 </parent>
 ```
 
-Child projects should define any needed Maven properties, for example:
+There are several configuration values in the `<properties>` section, 
+feel free to overwrite as necessary by redefining it.
 
+Example:
 ```xml
-
 <properties>
     <property>
-        <mainClass>...</mainClass> <!--fully-qualified class name of the main class-->
+        <maven.compiler.source>17</maven.compiler.source>
     </property>
 </properties>
 ```
 
-Child projects can then perform Maven actions such as compile (`mvn package`), install (`mvn -P library install`), etc.
-
-## Checking for dependency updates
-For checking plugin versions:
-```shell
-mvn versions:display-plugin-updates
-```
-
-For checking dependency versions:
-```shell
-mvn versions:display-dependency-updates
-```
+Child projects can also utilise [profiles](#available-profiles) defined by the Parent POM.
 
 ## Available Profiles
 
 ### Default profile
+`mvn <goal>`
 
+Required Properties:
+- `<cpRel>`
+- `<mainClass>`
+
+Purpose:
 - enforces Java and Maven version check
 - defines Maven plugin versions
-- copies JAR dependencies to a folder specified by property `cpRel`
+- copies JAR dependencies to a classpath folder specified by property `cpRel`
 - compiles the project into a lightweight JAR
-    - which uses the full class name specified by property `mainClass`
-    - with relative classpath to JAR dependencies specified by property `cpRel`
-- includes JavaDocs in the output
+    - which uses the fully qualified class name specified by property `mainClass`
+    - with relative classpath specified by property `cpRel`
+- includes JavaDocs in the JAR
+- flags hardware classifiers in the JAR via `bannedClassifier`
+  - to alert you of dependencies that are platform-specific
 
 ### `library` profile
+`mvn -P library <goal>`
 
 Meant for non-executable JARs.
 
 It has the same behavior as the default profile, except it:
 
-- does not copy JAR dependencies to a folder, nor require the `cpRel` property
+Purpose:
+- does not copy JAR dependencies to a classpath folder, nor require the `cpRel` property
 - does not require the `mainClass` (i.e., not executable)
 
 ### `uber` profile
@@ -93,7 +87,31 @@ Meant for compiling a standalone JAR with all dependencies embedded
 
 It has the same behavior as the default profile, except it:
 
-- does not copy JAR dependencies to a folder, nor require the `cpRel` property
+Required Properties:
+- `<mainClass>`
+
+Purpose:
+- does not copy JAR dependencies to a classpath folder, nor require the `cpRel` property
 - compiles a heavy, standalone JAR
     - all JAR dependencies will be embedded within it
-    
+
+
+# Deploying Offline
+
+After you've inherited this POM and built a Java app, 
+sometimes you want to deploy within an offline environment.
+
+1. Go to an online environment
+2. `git clone <url> <localDir>`
+3. Build your Java app, but add this property `-D"maven.repo.local"=<dir>`
+    - E.g. `mvn -Dmaven.repo.local=<dir> install`
+    - You  might need `mvn -D"maven.repo.local"=<dir>` instead if you're on Windows
+    - `<dir>` is where you define your temporary Maven local repository
+4. Zip the Maven local repository, transfer it, and unzip it in the offline machine
+    - You can unzip in the default location `~/.m2`
+    - Or use the property `-Dmaven.repo.local=<dir>`
+    - Or configure `<localRepository>` in Maven `settings.xml`
+    - See https://maven.apache.org/settings.html
+5. Configure your offline machine's Maven `settings.xml`
+    - Set `<offline>true</offline>`
+6. You will be able to build using Maven now
