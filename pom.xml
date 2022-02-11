@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>io.github.cardin</groupId>
     <artifactId>parent-pom</artifactId>
-    <version>1.0.0</version>
+    <version>1.1.0</version>
     <packaging>pom</packaging>
     <properties>
         <cpRel>../lib</cpRel>
@@ -56,18 +56,8 @@
                         <artifactId>maven-enforcer-plugin</artifactId>
                         <executions>
                             <execution>
-                                <configuration combine.children="append">
-                                    <rules>
-                                        <requireProperty>
-                                            <property>mainClass</property>
-                                            <regex>.*</regex><!-- removes the Regex -->
-                                        </requireProperty>
-                                        <requireProperty>
-                                            <property>cpRel</property>
-                                            <regex>.*</regex><!-- removes the Regex -->
-                                        </requireProperty>
-                                    </rules>
-                                </configuration>
+                                <id>Runnable Rules</id>
+                                <phase>none</phase>
                             </execution>
                         </executions>
                     </plugin>
@@ -104,7 +94,8 @@
                         <artifactId>maven-enforcer-plugin</artifactId>
                         <executions>
                             <execution>
-                                <configuration combine.children="append">
+                                <id>Runnable Rules</id>
+                                <configuration>
                                     <rules>
                                         <requireProperty>
                                             <property>cpRel</property>
@@ -267,6 +258,7 @@
                 <version>${version.plugin.enforce}</version>
                 <executions>
                     <execution>
+                        <id>General Rules</id>
                         <phase>validate</phase>
                         <goals>
                             <goal>enforce</goal>
@@ -279,17 +271,6 @@
                                 <requireMavenVersion>
                                     <version>${version.build.maven}</version>
                                 </requireMavenVersion>
-                                <requireProperty>
-                                    <property>cpRel</property>
-                                    <regex>\S+.*</regex>
-                                    <message>Missing Property: cpRel - relative path to classpath
-                                        from project.basedir</message>
-                                </requireProperty>
-                                <requireProperty>
-                                    <property>mainClass</property>
-                                    <regex>\S+.*</regex>
-                                    <message>Missing Property: mainClass - entry point of the program</message>
-                                </requireProperty>
                                 <bannedDependencies>
                                     <excludes>
                                         <exclude>*:*:*:*:*:*${bannedClassifier}*</exclude>
@@ -308,6 +289,28 @@ https://stackoverflow.com/questions/60336169/how-to-copy-only-os-specific-depend
                                         ]]>
                                     </message>
                                 </bannedDependencies>
+                            </rules>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>Runnable Rules</id>
+                        <phase>validate</phase>
+                        <goals>
+                            <goal>enforce</goal>
+                        </goals>
+                        <configuration>
+                            <rules>
+                                <requireProperty>
+                                    <property>cpRel</property>
+                                    <regex>\S+.*</regex>
+                                    <message>Missing Property: cpRel - relative path to classpath
+                                        from project.basedir</message>
+                                </requireProperty>
+                                <requireProperty>
+                                    <property>mainClass</property>
+                                    <regex>\S+.*</regex>
+                                    <message>Missing Property: mainClass - entry point of the program</message>
+                                </requireProperty>
                             </rules>
                         </configuration>
                     </execution>
