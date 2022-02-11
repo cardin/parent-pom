@@ -2,6 +2,7 @@
 # https://gitlab.com/gitlab-org/gitlab-foss/-/blob/master/lib/gitlab/ci/templates/Maven.gitlab-ci.yml
 
 variables:
+    GIT_SSL_NO_VERIFY: 1
     # Java
     MAVEN_DOCKER: maven:3-eclipse-temurin-11
     MAVEN_SETTINGS: ".gitlab/settings.xml"
