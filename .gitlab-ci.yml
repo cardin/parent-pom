@@ -14,10 +14,17 @@ cache:
         - .m2/repository
 
 stages:
+    - test
     - deploy
 
 default:
     retry: 2
+
+maven-verify:
+    stage: test
+    image: $MAVEN_DOCKER
+    script:
+        - mvn $MAVEN_CLI_OPTS -s $MAVEN_SETTINGS -P library verify
 
 maven-deploy:
     stage: deploy
