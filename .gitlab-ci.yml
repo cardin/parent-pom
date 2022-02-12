@@ -6,7 +6,7 @@ variables:
     # Java
     MAVEN_DOCKER: maven:3-eclipse-temurin-11
     MAVEN_SETTINGS: ".gitlab/settings.xml"
-    MAVEN_OPTS: "-Dhttps.protocols=TLSv1.2 -Dorg.slf4j.simpleLogger.showDateTime=true -Djava.awt.headless=true" # https://maven.apache.org/configure.html
+    MAVEN_OPTS: "-Dhttps.protocols=TLSv1.2 -Dmaven.repo.local=$CI_PROJECT_DIR/.m2/repository -Dorg.slf4j.simpleLogger.showDateTime=true -Djava.awt.headless=true" # https://maven.apache.org/configure.html
     MAVEN_CLI_OPTS: "--batch-mode --errors --fail-at-end --show-version -DinstallAtEnd=true -DdeployAtEnd=true"
 
 cache:
